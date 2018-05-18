@@ -94,6 +94,27 @@ class ViewController: UIViewController {
         
     }
     
+    /// 更新光源的光照估计
+    private func updateLightNodesLightEstimation() {
+        DispatchQueue.main.async {
+            guard self.lightEstimationSwitch.isOn , let lightEstimation = self.sceneView.session.currentFrame?.lightEstimate else {
+                return
+            }
+            // 场景的光估计
+            let ambientIntensity = lightEstimation.ambientIntensity
+            let ambientColorTemperature = lightEstimation.ambientColorTemperature
+            
+            // 设置光源的光估计
+            for lightNode in self.lightNodes {
+                guard let light = lightNode.light else {
+                    continue
+                }
+                
+                light.intensity = ambientIntensity
+                light.temperature = ambientColorTemperature
+            }
+        }
+    }
     
     /// 创建圆球节点
     private func getSphereNode(withPositon position:SCNVector3) -> SCNNode {
@@ -150,6 +171,11 @@ extension ViewController: ARSCNViewDelegate {
         }
         
         let planeAnchorCenter = SCNVector3(planeAnchor.center)
+        let sphereNode = getSphereNode(withPositon: planeAnchorCenter)
+        addLightNodeTo(node: sphereNode)
+        node.addChildNode(sphereNode)
+        detectedHorizontalPlane = true
+        updateLightNodesLightEstimation()
         
     }
     
