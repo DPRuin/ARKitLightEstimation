@@ -44,6 +44,9 @@
                                             </label>
                                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="B4w-Yk-vFf">
                                                 <rect key="frame" x="0.0" y="20.5" width="345" height="31"/>
+                                                <connections>
+                                                    <action selector="lightEstimationSwitchValueDidChange:" destination="BV1-FR-VrT" eventType="valueChanged" id="VdG-jG-tV7"/>
+                                                </connections>
                                             </switch>
                                         </subviews>
                                     </stackView>
@@ -58,6 +61,9 @@
                                             </label>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="0oH-B9-H7k">
                                                 <rect key="frame" x="-2" y="20.5" width="347" height="31"/>
+                                                <connections>
+                                                    <action selector="ambientIntensitySliderValueDidChange:" destination="BV1-FR-VrT" eventType="valueChanged" id="T8f-TB-tAX"/>
+                                                </connections>
                                             </slider>
                                         </subviews>
                                     </stackView>
@@ -72,6 +78,9 @@
                                             </label>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="5qz-Z5-vyR">
                                                 <rect key="frame" x="-2" y="20.5" width="347" height="31"/>
+                                                <connections>
+                                                    <action selector="ambientColorTemperatureSliderValueDidChange:" destination="BV1-FR-VrT" eventType="valueChanged" id="sDc-c7-3ND"/>
+                                                </connections>
                                             </slider>
                                         </subviews>
                                     </stackView>

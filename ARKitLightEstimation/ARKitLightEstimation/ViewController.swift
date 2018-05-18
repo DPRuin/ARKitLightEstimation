@@ -10,7 +10,7 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate {
+class ViewController: UIViewController {
 
 
     @IBOutlet weak var sceneView: ARSCNView!
@@ -27,30 +27,37 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @IBOutlet weak var lightEstimationSwitch: UISwitch!
     
+    /// 光源节点
+    var lightNodes = [SCNNode]()
+    var detectedHorizontalPlane = false {
+        didSet {
+            DispatchQueue.main.async {
+                self.mainStackView.isHidden = !self.detectedHorizontalPlane
+                self.instructionLabel.isHidden = self.detectedHorizontalPlane
+                self.lightEstimationStackView.isHidden = !self.detectedHorizontalPlane
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Set the view's delegate
-        sceneView.delegate = self
-        
+
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
+        sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
         
         // Create a new scene
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
         // Set the scene to the view
         sceneView.scene = scene
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
-
-        // Run the view's session
-        sceneView.session.run(configuration)
+        setupSceneView()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -64,18 +71,28 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         super.didReceiveMemoryWarning()
         // Release any cached data, images, etc that aren't in use.
     }
-
-    // MARK: - ARSCNViewDelegate
     
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
+    private func setupSceneView() {
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = .horizontal
+        sceneView.session.run(configuration)
+        sceneView.delegate = self
     }
-*/
     
+    // MARK: - switch and slider
+    
+    @IBAction func ambientColorTemperatureSliderValueDidChange(_ sender: UISlider) {
+        print("-color-\(sender.value)")
+    }
+    
+    @IBAction func ambientIntensitySliderValueDidChange(_ sender: UISlider) {
+        print("-intensity-\(sender.value)")
+    }
+    
+    @IBAction func lightEstimationSwitchValueDidChange(_ sender: UISwitch) {
+        print("-light-\(sender.isOn)")
+        
+    }
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
@@ -89,5 +106,28 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func sessionInterruptionEnded(_ session: ARSession) {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
+    }
+}
+
+// MARK: - ARSCNViewDelegate
+extension ViewController: ARSCNViewDelegate {
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        guard let planeAnchor = anchor as? ARPlaneAnchor  else {
+            return
+        }
+        
+        let planeAnchorCenter = SCNVector3(planeAnchor.center)
+        
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        
+    }
+}
+
+extension float4x4 {
+    var translation: float3 {
+        let translation = self.columns.3
+        return float3(translation.x, translation.y, translation.z)
     }
 }
