@@ -93,6 +93,39 @@ class ViewController: UIViewController {
         print("-light-\(sender.isOn)")
         
     }
+    
+    
+    /// 创建圆球节点
+    private func getSphereNode(withPositon position:SCNVector3) -> SCNNode {
+        let sphere = SCNSphere(radius: 0.1)
+        let sphereNode = SCNNode(geometry: sphere)
+        sphereNode.position = position
+        sphereNode.position.y = Float(sphere.radius) + 1
+        return sphereNode
+    }
+    
+    /// 创建光源节点
+    private func getLightNode() -> SCNNode {
+        let light = SCNLight()
+        light.type = .omni
+        light.intensity = 0
+        light.temperature = 0
+        
+        let lightNode = SCNNode()
+        lightNode.light = light
+        lightNode.position = SCNVector3(x: 0, y: 1, z: 0)
+        
+        return lightNode
+    }
+    
+    /// 添加光源到节点
+    func addLightNodeTo(node: SCNNode) {
+        let lightNode = getLightNode()
+        node.addChildNode(lightNode)
+        lightNodes.append(lightNode)
+    }
+    
+    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
