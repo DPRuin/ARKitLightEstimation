@@ -47,11 +47,12 @@ class ViewController: UIViewController {
         sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
         
         // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        // let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
         // Set the scene to the view
-        sceneView.scene = scene
-        
+        // sceneView.scene = scene
+        // sceneView.automaticallyUpdatesLighting
+        // sceneView.autoenablesDefaultLighting
         
     }
     
@@ -82,15 +83,53 @@ class ViewController: UIViewController {
     // MARK: - switch and slider
     
     @IBAction func ambientColorTemperatureSliderValueDidChange(_ sender: UISlider) {
-        print("-color-\(sender.value)")
+        // print("-color-\(sender.value)")
+        DispatchQueue.main.async {
+            let ambientColorTemperature = sender.value * 6500
+            self.ambientColorTemperatureLabel.text = "Ambient Color Temperature: \(ambientColorTemperature)"
+            
+            guard !self.lightEstimationSwitch.isOn else {
+                return
+            }
+            
+            for lightNode in self.lightNodes {
+                guard let light = lightNode.light else {
+                    continue
+                }
+                light.temperature = CGFloat(ambientColorTemperature)
+            }
+        }
+        
     }
     
     @IBAction func ambientIntensitySliderValueDidChange(_ sender: UISlider) {
-        print("-intensity-\(sender.value)")
+        // print("-intensity-\(sender.value)")
+        DispatchQueue.main.async {
+            let ambientIntensity = sender.value * 2000
+            self.ambientIntensityLabel.text = "Ambient Intensity: \(ambientIntensity)"
+            
+            guard !self.lightEstimationSwitch.isOn else {
+                return
+            }
+            
+            for lightNode in self.lightNodes {
+                guard let light = lightNode.light else {
+                    continue
+                }
+                light.intensity = CGFloat(ambientIntensity)
+            }
+        }
     }
     
     @IBAction func lightEstimationSwitchValueDidChange(_ sender: UISwitch) {
         print("-light-\(sender.isOn)")
+
+        if sender.isOn {// 光照估计打开 光源更新光照估计
+           updateLightNodesLightEstimation()
+        } else { // 光照估计未打开，光源更新为slider的值
+            ambientIntensitySliderValueDidChange(ambientIntensitySlider)
+            ambientColorTemperatureSliderValueDidChange(ambientColorTemperatureSlider)
+        }
         
     }
     
@@ -103,6 +142,7 @@ class ViewController: UIViewController {
             // 场景的光估计
             let ambientIntensity = lightEstimation.ambientIntensity
             let ambientColorTemperature = lightEstimation.ambientColorTemperature
+            
             
             // 设置光源的光估计
             for lightNode in self.lightNodes {
@@ -121,7 +161,7 @@ class ViewController: UIViewController {
         let sphere = SCNSphere(radius: 0.1)
         let sphereNode = SCNNode(geometry: sphere)
         sphereNode.position = position
-        sphereNode.position.y = Float(sphere.radius) + 1
+        sphereNode.position.y += Float(sphere.radius)
         return sphereNode
     }
     
@@ -170,17 +210,21 @@ extension ViewController: ARSCNViewDelegate {
             return
         }
         
+        // 识别到平面添加圆球
         let planeAnchorCenter = SCNVector3(planeAnchor.center)
         let sphereNode = getSphereNode(withPositon: planeAnchorCenter)
+        // 添加光源
         addLightNodeTo(node: sphereNode)
         node.addChildNode(sphereNode)
         detectedHorizontalPlane = true
+        // 更新光源的光照估计
         updateLightNodesLightEstimation()
-        
     }
     
+    // 每帧调用
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        
+        // 更新光源的光照估计
+        updateLightNodesLightEstimation()
     }
 }
 
