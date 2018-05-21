@@ -13,6 +13,9 @@
 		7EA5209A20AE73B80038E2D7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7EA5209820AE73B80038E2D7 /* Main.storyboard */; };
 		7EA5209C20AE73BA0038E2D7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7EA5209B20AE73BA0038E2D7 /* Assets.xcassets */; };
 		7EA5209F20AE73BA0038E2D7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7EA5209D20AE73BA0038E2D7 /* LaunchScreen.storyboard */; };
+		7EA520A820B294E20038E2D7 /* Chameleon2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA520A620B2805A0038E2D7 /* Chameleon2.swift */; };
+		7EA520AA20B295710038E2D7 /* Chameleon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA520A920B295700038E2D7 /* Chameleon.swift */; };
+		7EA520AC20B297AC0038E2D7 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA520AB20B297AC0038E2D7 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +27,9 @@
 		7EA5209B20AE73BA0038E2D7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7EA5209E20AE73BA0038E2D7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7EA520A020AE73BA0038E2D7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7EA520A620B2805A0038E2D7 /* Chameleon2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chameleon2.swift; sourceTree = "<group>"; };
+		7EA520A920B295700038E2D7 /* Chameleon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chameleon.swift; sourceTree = "<group>"; };
+		7EA520AB20B297AC0038E2D7 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +65,9 @@
 				7EA5209220AE73B80038E2D7 /* AppDelegate.swift */,
 				7EA5209420AE73B80038E2D7 /* art.scnassets */,
 				7EA5209620AE73B80038E2D7 /* ViewController.swift */,
+				7EA520A920B295700038E2D7 /* Chameleon.swift */,
+				7EA520AB20B297AC0038E2D7 /* Extensions.swift */,
+				7EA520A620B2805A0038E2D7 /* Chameleon2.swift */,
 				7EA5209820AE73B80038E2D7 /* Main.storyboard */,
 				7EA5209B20AE73BA0038E2D7 /* Assets.xcassets */,
 				7EA5209D20AE73BA0038E2D7 /* LaunchScreen.storyboard */,
@@ -139,7 +148,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7EA520AC20B297AC0038E2D7 /* Extensions.swift in Sources */,
 				7EA5209720AE73B80038E2D7 /* ViewController.swift in Sources */,
+				7EA520A820B294E20038E2D7 /* Chameleon2.swift in Sources */,
+				7EA520AA20B295710038E2D7 /* Chameleon.swift in Sources */,
 				7EA5209320AE73B80038E2D7 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

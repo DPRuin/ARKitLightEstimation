@@ -27,6 +27,8 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var lightEstimationSwitch: UISwitch!
     
+    let chameleon = Chameleon()
+    
     var sphereMaterial: SCNMaterial?
     
     /// 光源节点
@@ -41,6 +43,15 @@ class ViewController: UIViewController {
         }
     }
     
+    var isActivate = false {
+        didSet {
+            if self.isActivate == oldValue  {
+                return
+            }
+            self.chameleon.activateCamouflage(self.isActivate)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -52,7 +63,7 @@ class ViewController: UIViewController {
         // let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
         // Set the scene to the view
-        // sceneView.scene = scene
+        sceneView.scene = chameleon
         // sceneView.automaticallyUpdatesLighting
         // sceneView.autoenablesDefaultLighting
         
@@ -94,12 +105,12 @@ class ViewController: UIViewController {
                 return
             }
             
-            for lightNode in self.lightNodes {
-                guard let light = lightNode.light else {
-                    continue
-                }
-                light.temperature = CGFloat(ambientColorTemperature)
-            }
+//            for lightNode in self.lightNodes {
+//                guard let light = lightNode.light else {
+//                    continue
+//                }
+//                light.temperature = CGFloat(ambientColorTemperature)
+//            }
         }
         
     }
@@ -114,12 +125,14 @@ class ViewController: UIViewController {
                 return
             }
             
-            for lightNode in self.lightNodes {
-                guard let light = lightNode.light else {
-                    continue
-                }
-                light.intensity = CGFloat(ambientIntensity)
+            // 设置光源的光估计
+            // self.chameleon.lightingEnvironment.intensity = CGFloat(ambientIntensity) / 100
+            if ambientIntensity > 1000.0 {
+                self.isActivate = true
+            } else {
+                self.isActivate = false
             }
+
         }
     }
     
@@ -127,16 +140,16 @@ class ViewController: UIViewController {
         print("-light-\(sender.isOn)")
 
         if sender.isOn {// 光照估计打开 光源更新光照估计
-           updateLightNodesLightEstimation()
+            updateChameleonLightEstimation()
         } else { // 光照估计未打开，光源更新为slider的值
             ambientIntensitySliderValueDidChange(ambientIntensitySlider)
             ambientColorTemperatureSliderValueDidChange(ambientColorTemperatureSlider)
         }
         
     }
-    
-    /// 更新光源的光照估计
-    private func updateLightNodesLightEstimation() {
+
+    /// 更新变色龙的光照估计
+    private func updateChameleonLightEstimation() {
         DispatchQueue.main.async {
             guard self.lightEstimationSwitch.isOn , let lightEstimation = self.sceneView.session.currentFrame?.lightEstimate else {
                 return
@@ -150,23 +163,12 @@ class ViewController: UIViewController {
             self.ambientColorTemperatureLabel.text = "Ambient Color Temperature: \(ambientColorTemperature)"
             self.ambientIntensityLabel.text = "Ambient Intensity: \(ambientIntensity)"
             
-            // 环境强度改变时节点材质颜色改变
-            if let material = self.sphereMaterial {
-                if (ambientIntensity / 2000.0) > 0.5 {
-                    material.diffuse.contents = UIColor.orange
-                } else {
-                    material.diffuse.contents = UIColor.green
-                }
-            }
-            
             // 设置光源的光估计
-            for lightNode in self.lightNodes {
-                guard let light = lightNode.light else {
-                    continue
-                }
-                
-                light.intensity = CGFloat(ambientIntensity)
-                light.temperature = CGFloat(ambientColorTemperature)
+            // self.chameleon.lightingEnvironment.intensity = CGFloat(ambientIntensity) / 100
+            if ambientIntensity > 900.0 {
+                self.isActivate = true
+            } else {
+                self.isActivate = false
             }
         }
     }
@@ -229,28 +231,24 @@ class ViewController: UIViewController {
 // MARK: - ARSCNViewDelegate
 extension ViewController: ARSCNViewDelegate {
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        guard let planeAnchor = anchor as? ARPlaneAnchor  else {
-            return
-        }
+        if chameleon.isVisible() { return }
         
-        // 识别到平面添加圆球
-        let planeAnchorCenter = SCNVector3(planeAnchor.center)
-        let sphereNode = getSphereNode(withPositon: planeAnchorCenter)
-        // 添加光源
-        addLightNodeTo(node: sphereNode)
-        node.addChildNode(sphereNode)
+        if anchor is ARPlaneAnchor {
+            chameleon.setTransform(anchor.transform)
+            chameleon.show()
+            chameleon.reactToInitialPlacement(in: sceneView)
+        }
         detectedHorizontalPlane = true
-        // 更新光源的光照估计
-        updateLightNodesLightEstimation()
-
+        
     }
     
     // 每帧调用
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        // 更新光源的光照估计
-        updateLightNodesLightEstimation()
+
+        // chameleon.reactToRendering(in: sceneView)
+        updateChameleonLightEstimation()
         
-    }
+    } 
 }
 
 extension float4x4 {
