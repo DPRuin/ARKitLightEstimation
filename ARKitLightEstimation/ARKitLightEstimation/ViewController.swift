@@ -140,9 +140,13 @@ class ViewController: UIViewController {
                 return
             }
             // 场景的光估计
-            let ambientIntensity = lightEstimation.ambientIntensity
-            let ambientColorTemperature = lightEstimation.ambientColorTemperature
+            let ambientIntensity = Float(lightEstimation.ambientIntensity)
+            let ambientColorTemperature: Float = Float(lightEstimation.ambientColorTemperature)
             
+            self.ambientIntensitySlider.value = ambientIntensity / 2000.0
+            self.ambientColorTemperatureSlider.value = ambientColorTemperature / 6500.0
+            self.ambientColorTemperatureLabel.text = "Ambient Color Temperature: \(ambientColorTemperature)"
+            self.ambientIntensityLabel.text = "Ambient Intensity: \(ambientIntensity)"
             
             // 设置光源的光估计
             for lightNode in self.lightNodes {
@@ -150,8 +154,8 @@ class ViewController: UIViewController {
                     continue
                 }
                 
-                light.intensity = ambientIntensity
-                light.temperature = ambientColorTemperature
+                light.intensity = CGFloat(ambientIntensity)
+                light.temperature = CGFloat(ambientColorTemperature)
             }
         }
     }
@@ -219,12 +223,14 @@ extension ViewController: ARSCNViewDelegate {
         detectedHorizontalPlane = true
         // 更新光源的光照估计
         updateLightNodesLightEstimation()
+
     }
     
     // 每帧调用
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         // 更新光源的光照估计
         updateLightNodesLightEstimation()
+        
     }
 }
 
