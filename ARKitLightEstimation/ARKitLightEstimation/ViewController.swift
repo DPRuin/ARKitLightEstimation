@@ -27,6 +27,8 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var lightEstimationSwitch: UISwitch!
     
+    var sphereMaterial: SCNMaterial?
+    
     /// 光源节点
     var lightNodes = [SCNNode]()
     var detectedHorizontalPlane = false {
@@ -148,6 +150,15 @@ class ViewController: UIViewController {
             self.ambientColorTemperatureLabel.text = "Ambient Color Temperature: \(ambientColorTemperature)"
             self.ambientIntensityLabel.text = "Ambient Intensity: \(ambientIntensity)"
             
+            // 环境强度改变时节点材质颜色改变
+            if let material = self.sphereMaterial {
+                if (ambientIntensity / 2000.0) > 0.5 {
+                    material.diffuse.contents = UIColor.orange
+                } else {
+                    material.diffuse.contents = UIColor.green
+                }
+            }
+            
             // 设置光源的光估计
             for lightNode in self.lightNodes {
                 guard let light = lightNode.light else {
@@ -166,6 +177,14 @@ class ViewController: UIViewController {
         let sphereNode = SCNNode(geometry: sphere)
         sphereNode.position = position
         sphereNode.position.y += Float(sphere.radius)
+        
+        
+        let material = SCNMaterial()
+        sphereMaterial = material
+        material.diffuse.contents = UIColor.white
+        
+        sphere.materials = [material]
+        
         return sphereNode
     }
     
@@ -178,7 +197,7 @@ class ViewController: UIViewController {
         
         let lightNode = SCNNode()
         lightNode.light = light
-        lightNode.position = SCNVector3(x: 0, y: 1, z: 0)
+        lightNode.position = SCNVector3(x: -1, y: 1, z: 0.5)
         
         return lightNode
     }
